@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>for Loops</title>
+		<script type="text/javascript">
+			
+			// For Loops
+			
+			var j;
+			
+			//  for loops are useful for processing arrays
+			
+			var colors = ["red", "green", "blue", "orange", "purple"];
+			
+			for (j=0;j<colors.length;j++){
+				document.write("<p style='background-color : " + colors[j]+"'>"+colors[j]+"</p>");
+			}
+			
+			//  The for-in loop is also useful in array processing
+			for (var index in colors){
+				document.write("<p style='color : " + colors[index]+"'>"+colors[index]+"</p>");
+			}
+					
+			
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

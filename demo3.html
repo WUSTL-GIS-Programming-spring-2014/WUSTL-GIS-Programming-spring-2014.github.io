@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+      #home{
+        position:absolute;
+        top:100px;
+        left:20px;
+        z-index:1;
+      }
+      <!--The z-index property specifies the stack order of an element.
+      An element with greater stack order is always in front of an element with a lower stack order.-->
+    </style>
+    <script src="http://js.arcgis.com/3.8/"></script>
+    <script>
+      var map;
+      //Add reference to the modules in require()
+      require(["esri/map","esri/dijit/HomeButton","esri/dijit/PopupTemplate","esri/layers/FeatureLayer","dojo/dom","dojo/on",
+      "esri/layers/GraphicsLayer","esri/tasks/QueryTask","esri/tasks/query","esri/symbols/SimpleLineSymbol","dojo/_base/Color","dojo/domReady!"], 
+      function(Map,HomeButton,PopupTemplate,FeatureLayer,dom,on,GraphicsLayer,QueryTask,Query,SimpleLineSymbol,Color) {
+        map = new Map("map", {
+          basemap: "gray",
+          center: [-90.4,38.6], // long, lat
+          zoom: 10
+        });
+        //Create an instance of the HomeButton widget 
+        //add a reference to the map, second parameter is where to attach the widget
+        var home = new HomeButton({
+        map:map
+        },"home");
+        home.startup();
+        //Add popup infobox for user-defined layer from ArcGIS server
+        var template = new PopupTemplate({
+        title:"   ",
+        fieldInfos:[{fieldName:"  ",visible:true,label:"  "},{fieldName:"  ",visible:true}],
+        /*mediaInfos:[{
+          caption: "Details",
+            type:"barchart",
+            value:{
+              theme: "ThreeD",
+              fields:["  "]}
+          }]*/
+        });
+        
+        var url =    ;
+        //Add user-defined layer from ArcGIS server // new FeatureLayer(url,{options?})
+        var census = new FeatureLayer(      ,{
+        mode:FeatureLayer.MODE_ONDEMAND,//query mode for the feature layer. MODE_ONDEMAND - features are fetched from the server as needed.
+        outFields:["*"],//A comma delimited list of field names to include in the FeatureLayer. If not specified, the feature layer will return the OBJECTID field
+        infoTemplate:template
+        });
+      
+        map.addLayer(census);
+        
+        //Add function to execute attribute query
+        
+        
+		  
+      });
+    </script>
+  </head>
+
+  <body>
+    <!--Add new element to store the user interface for widgets-->
+    <div id="map">
+      <div id="home"></div>
+    </div>
+  </body>
+</html>

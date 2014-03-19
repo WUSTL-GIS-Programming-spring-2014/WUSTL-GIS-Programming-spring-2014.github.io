@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+      #home{
+        position:absolute;
+        top:100px;
+        left:20px;
+        z-index:1;
+      }
+      #info {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 10px;
+        background-color: #999;
+        font: Verdana;
+        width: 150px;
+        z-index:2;
+        text-align: left;
+        border-radius: 0 0 0 10px;
+      }
+      <!--The z-index property specifies the stack order of an element.
+      An element with greater stack order is always in front of an element with a lower stack order.-->
+    </style>
+    <script src="http://js.arcgis.com/3.8/"></script>
+    <script>
+      var map;
+      //Add reference to the modules in require()
+      require(["esri/map","esri/dijit/HomeButton","esri/dijit/PopupTemplate","esri/layers/FeatureLayer","dojo/_base/array","esri/dijit/Legend","dojo/domReady!"], 
+      function(Map,HomeButton,PopupTemplate,FeatureLayer,arrayUtils,Legend) {
+        map = new Map("map", {
+          basemap: "gray",
+          center: [-90.4,38.6], // long, lat
+          zoom: 10
+        });
+        //Create an instance of the HomeButton widget 
+        //add a reference to the map, second parameter is where to attach the widget
+        var home = new HomeButton({
+        map:map
+        },"home");
+        home.startup();
+        //Add popup infobox for user-defined layer from ArcGIS server //new PopupTemplate({title:"",fieldInfos[{fieldName:""}]})
+        
+        
+        //Add user-defined layer from ArcGIS server // new FeatureLayer(url,{options?})
+       
+      
+        
+        //Add Legend to the map
+  	    map.on("layers-add-result", function (evt) {
+        //arrayUtil.map applies callback to each element of arr and returns an Array with the results          
+        var layerInfo = arrayUtils.map(evt.layers, function (layer, index) {
+          return {layer:layer.layer, title:layer.layer.name};
+        });
+        if (layerInfo.length > 0) {
+          var legend = new Legend({
+            map: map,
+            layerInfos: layerInfo//if no layer is specified, all layer will be added to the legend
+          }, "legend");
+          legend.startup();
+        }
+        });
+        
+		  
+      });
+    </script>
+  </head>
+
+  <body>
+    <!--Add new element to store the user interface for widgets-->
+    <div id="map">
+      <div id="home"></div>
+      <div id="info" style="font-size: 20px;">Legend
+      <div id="legend"></div>
+    </div>
+    </div>
+  </body>
+</html>

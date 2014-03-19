@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>if Statements</title>
+		<script type="text/javascript">
+			
+			// If user closes the prompt window or clicks the cancel button
+			// then age == null
+
+			var age = window.prompt("How old are you?","");
+			
+			if (age>=21){
+				console.log("You can vote and buy a drink.");
+			} 
+			else if (age >= 18){
+				console.log("You can vote but not buy a drink.");
+				
+			}
+			else {
+				console.log("You can't vote or buy a drink.");
+			}
+			
+			
+			
+			// Compound conditions
+			
+			var isCitizen = true;
+			var hasWorkPermit = false;
+			if (isCitizen && hasWorkPermit && age >=16){
+				console.log("You are legal to work.");
+			}
+			
+
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
