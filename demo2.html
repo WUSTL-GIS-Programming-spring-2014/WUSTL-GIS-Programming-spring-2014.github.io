@@ -55,15 +55,24 @@
         map:map
         },"home");
         home.startup();
-        //Add popup infobox for user-defined layer from ArcGIS server //new PopupTemplate({title:"",fieldInfos[{fieldName:""}]})
-        
+        //Add popup infobox for user-defined layer from ArcGIS server
+        var template = new PopupTemplate({
+        title:"{NAME}",
+        fieldInfos:[{fieldName:"NAME",visible:true,label:"School Name"},{fieldName:"D_NAME",visible:true}]
+        });
         
         //Add user-defined layer from ArcGIS server // new FeatureLayer(url,{options?})
-       
+        var schools = new FeatureLayer("http://gissl-aa.wustl.edu/arcgis/rest/services/JSP/School_District_BaseMap_2013/MapServer/0",{
+        mode:FeatureLayer.MODE_ONDEMAND,//query mode for the feature layer. MODE_ONDEMAND - features are fetched from the server as needed.
+        outFields:["*"],//A comma delimited list of field names to include in the FeatureLayer. If not specified, the feature layer will return the OBJECTID field
+        infoTemplate:template
+        });
       
-        
-        //Add Legend to the map
-  	    map.on("layers-add-result", function (evt) {
+        map.addLayers([schools]);
+		//Add Legend to the map
+        //map.on is using the dojo event handler - on(eventType,listener), same as on(map,"layers-add-result","function(evt){...})
+        //layers-add-result event is fired after all map layers have been added using map.addLayers
+        map.on("layers-add-result", function (evt) {
         //arrayUtil.map applies callback to each element of arr and returns an Array with the results          
         var layerInfo = arrayUtils.map(evt.layers, function (layer, index) {
           return {layer:layer.layer, title:layer.layer.name};
@@ -75,7 +84,7 @@
           }, "legend");
           legend.startup();
         }
-        });
+      });
         
 		  
       });
