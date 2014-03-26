@@ -1,7 +1,4 @@
-<html>
-<head>
-</head>
-<body>
+
 //Add reference to the widget modules in require()
 require(["esri/map","esri/dijit/HomeButton","esri/dijit/Geocoder","dojo/domReady!"], function(Map,HomeButton,Geocoder) {
   map = new Map("map", {
@@ -25,5 +22,3 @@ require(["esri/map","esri/dijit/HomeButton","esri/dijit/Geocoder","dojo/domReady
   },"geocoder");
   geocoder:startup(); 
 });
-</body>
-</html>
