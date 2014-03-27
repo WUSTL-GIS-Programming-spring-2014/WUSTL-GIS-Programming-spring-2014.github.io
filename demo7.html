@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #FFF;
+            overflow: hidden;
+            font-family: "Trebuchet MS";
+        }
+        #home {
+            position: absolute;
+            top: 100px;
+            left: 20px;
+            z-index: 1;
+        }
+        #geocoder {
+            position: absolute;
+            top: 40px;
+            left: 75px;
+            z-index: 1;
+        }
+        <!--The z-index property specifies the stack order of an element. An element with greater stack order is always in front of an element with a lower stack order.-->
+    </style>
+    <script src="http://js.arcgis.com/3.8/"></script>
+    <script>
+        var map;
+															//Add reference to the widget modules in require()
+        require(["esri/map", "esri/dijit/HomeButton", "esri/dijit/Geocoder", "dojo/domReady!"], function (Map, HomeButton, Geocoder) {map = new Map("map", {
+basemap: "topo",
+center: [-90.3, 38.6], // long, lat
+zoom: 10,
+sliderStyle: "small"
+});
+								//Create an instance of the HomeButton widget 
+            //add a reference to the map, second parameter is where to attach the widget
+            var home = new HomeButton({map: map}, "home");home.startup();var geocoder = new Geocoder({map: map,autoComplete: true,value: "St. Louis, MO"}, "geocoder");geocoder.startup();
+
+        });
+    </script>
+</head>
+
+<body>
+    <!--Add new element to store the user interface for widgets-->
+    <div id="map">
+        <div id="home"></div>
+        <div id="geocoder"></div>
+    </div>
+</body>
+
+</html>

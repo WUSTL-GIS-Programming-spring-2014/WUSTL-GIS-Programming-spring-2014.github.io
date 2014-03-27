@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
-    <title>Simple Map</title>
+    <title>Color Ramp Renderer</title>
     <link rel="stylesheet" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
     <style>
       html, body, #map {
@@ -49,8 +49,8 @@
         //Add popup infobox for user-defined layer from ArcGIS server
         var template = new PopupTemplate({
         title:"{NAMELSAD10}",
-        fieldInfos:[{fieldName:"POP10",visible:true,label:"Total population",format:{places:0,dijitSeparator:true}},{fieldName:"WHITE10",visible:true},
-        {fieldName:"BLACK10",visible:true},{fieldName:"HISP10",visible:true}],
+        fieldInfos:[{fieldName:"POP10",visible:true,label:"Total population",format:{places:0,dijitSeparator:true}},{fieldName:"WHITE10",visible:true,label:"White",format:{places:0,dijitSeparator:true}},
+        {fieldName:"BLACK10",visible:true,label:"Black",format:{places:0,dijitSeparator:true}},{fieldName:"HISP10",visible:true,label:"Hispanic",format:{places:0,dijitSeparator:true}},{fieldName:"ASIAN10",visible:true,label:"Asian",format:{places:0,dijitSeparator:true}}],
         mediaInfos:[{
           caption: "Details",
             type:"barchart",
@@ -74,13 +74,14 @@
         map.addLayer(census);
         
         //Use renderer to create a color ramp for quantitative data
-        census.on("load", function(){
+        
+		census.on("load", function(){
           var renderer = new SimpleRenderer(new SimpleFillSymbol().setOutline(new SimpleLineSymbol().setWidth(0.5)));
           renderer.setColorInfo({
-            field: "WHITE10",
+            field: "ASIAN10",
             normalizationField: "POP10",
             minDataValue: 0,
-            maxDataValue: 1,
+            maxDataValue:0.2,
             colors: [
               new Color([255, 255, 255]),
               new Color([127, 127, 0])
@@ -88,6 +89,8 @@
           });
           census.setRenderer(renderer);
         });
+		
+     
            
       });
     </script>

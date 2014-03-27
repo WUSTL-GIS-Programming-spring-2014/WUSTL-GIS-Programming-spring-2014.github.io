@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>Proportional symbols for points</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #FFF;
+            overflow: hidden;
+            font-family: "Trebuchet MS";
+        }
+        #home {
+            position: absolute;
+            top: 100px;
+            left: 20px;
+            z-index: 1;
+        }
+        #info {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 10px;
+            background-color: #999;
+            font: Verdana;
+            width: 300px;
+            z-index: 2;
+            text-align: left;
+            border-radius: 0 0 0 10px;
+        }
+        <!--The z-index property specifies the stack order of an element. An element with greater stack order is always in front of an element with a lower stack order.-->
+    </style>
+    <script src="http://js.arcgis.com/3.8/"></script>
+    <script>
+        var map;
+         //Add reference to the modules in require()
+        require(["esri/map", "esri/dijit/HomeButton", "esri/dijit/PopupTemplate", "esri/layers/FeatureLayer",
+                "esri/renderers/ClassBreaksRenderer", "dojo/_base/Color", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "dojo/_base/array", "esri/dijit/Legend", "esri/symbols/TextSymbol", "esri/renderers/SimpleRenderer", "esri/layers/LabelLayer", "dojo/domReady!"
+            ],
+            function (Map, HomeButton, PopupTemplate, FeatureLayer, ClassBreaksRenderer, Color, SimpleFillSymbol, SimpleLineSymbol, arrayUtils, Legend, TextSymbol, SimpleRenderer, LabelLayer) {
+                map = new Map("map", {
+                    basemap: "gray",
+                    center: [-90.4, 38.6], // long, lat
+                    zoom: 10
+                });
+                //Create an instance of the HomeButton widget 
+                //add a reference to the map, second parameter is where to attach the widget
+                var home = new HomeButton({
+                    map: map
+                }, "home");
+                home.startup();
+                //Add popup infobox for school layer
+                var template_sc = new PopupTemplate({
+                    title: "{NAME}",
+                    fieldInfos: [{
+                        fieldName: "NAME",
+                        visible: true,
+                        label: "School Name"
+                    }, {
+                        fieldName: "D_NAME",
+                        visible: true,
+                        label: "District Name"
+                    }, {
+                        fieldName: "ENROLLMENT",
+                        visible: true,
+                        format: {
+                            places: 0
+                        }
+                    }, {
+                        fieldName: "LUNCH_COUN",
+                        visible: true,
+                        label: "Number of students receiving free or reduce priced lunch",
+                        format: {
+                            places: 0
+                        }
+                    }]
+                });
+                //Add popup infobox for district layer
+                var template_dist = new PopupTemplate({
+                    title: "{DIST_NAME}",
+                    fieldInfos: [{
+                        fieldName: "DIST_NAME",
+                        visible: true,
+                        label: "District Name"
+                    }, {
+                        fieldName: "ENROLLMENT",
+                        visible: true,
+                        format: {
+                            places: 0
+                        }
+                    }, {
+                        fieldName: "LUNCH_COUN",
+                        visible: true,
+                        label: "Number of students receiving free or reduce priced lunch",
+                        format: {
+                            places: 0
+                        }
+                    }]
+                });
+
+                //define user-defined layer from ArcGIS server // new FeatureLayer(url,{options?})
+                var schools = new FeatureLayer("http://gissl-aa.wustl.edu/arcgis/rest/services/JSP/School_District_BaseMap_2013/MapServer/0", {
+                    mode: FeatureLayer.MODE_ONDEMAND, //query mode for the feature layer. MODE_ONDEMAND - features are fetched from the server as needed.
+                    outFields: ["*"], //A comma delimited list of field names to include in the FeatureLayer. If not specified, the feature layer will return the OBJECTID field
+                    infoTemplate: template_sc
+                });
+                //define district layer
+                var districts = new FeatureLayer("http://gissl-aa.wustl.edu/arcgis/rest/services/JSP/School_District_BaseMap_2013/MapServer/4", {
+                    mode: FeatureLayer.MODE_ONDEMAND, //query mode for the feature layer. MODE_ONDEMAND - features are fetched from the server as needed.
+                    outFields: ["*"], //A comma delimited list of field names to include in the FeatureLayer. If not specified, the feature layer will return the OBJECTID field
+                    infoTemplate: template_dist,
+                    opacity: 0.7
+                });
+                //define proportional symbol for school layer
+                /*
+				var proportionalSymbolInfo = {
+                    field: "", //required
+                    valueUnit: "unknown",//required ["unknown","inches", "feet", "yards", "miles", "nautical-miles", "millimeters", 	"centimeters", "decimeters", "meters", "kilometers", "decimal-degrees"]
+                    minDataValue:,
+                    maxDataValue:,
+                    minSize: 5,
+                    maxSize: 35
+                };
+				*/
+
+                schools.on("load", function () {
+                    //schools.renderer.setProportionalSymbolInfo(proportionalSymbolInfo);
+                    schools.copyright = "Washington University in St. Louis";
+                });
+					
+                districts.on("load", function () {
+                    var symbol = new SimpleFillSymbol();
+                    symbol.setColor(new Color([150, 150, 150, 0.5])); //grey color, default color if not match below
+                    var renderer = new ClassBreaksRenderer(symbol, "LUNCH_COUN");
+                    renderer.addBreak({
+                        minValue: 44,
+                        maxValue: 694,
+                        label: "<694",
+                        symbol: new SimpleFillSymbol().setColor(new Color([237, 248, 233, 0.7]))
+                    });
+                    renderer.addBreak({
+                        minValue: 694,
+                        maxValue: 2170,
+                        symbol: new SimpleFillSymbol().setColor(new Color([186, 228, 179, 0.7]))
+                    });
+                    renderer.addBreak({
+                        minValue: 2170,
+                        maxValue: 5301,
+                        symbol: new SimpleFillSymbol().setColor(new Color([116, 196, 118, 0.7]))
+                    });
+                    renderer.addBreak({
+                        minValue: 5301,
+                        maxValue: 10124,
+                        symbol: new SimpleFillSymbol().setColor(new Color([49, 163, 84, 0.7]))
+                    });
+                    renderer.addBreak({
+                        minValue: 10124,
+                        maxValue: Infinity,
+                        label: ">10124",
+                        symbol: new SimpleFillSymbol().setColor(new Color([0, 109, 44, 0.7]))
+                    });
+                    //districts.setRenderer(renderer);
+                });
+                map.addLayers([schools]);
+            
+                //Add Legend to the map
+                //map.on is using the dojo event handler - on(eventType,listener), same as on(map,"layers-add-result","function(evt){...})
+                //layers-add-result event is fired after all map layers have been added using map.addLayers
+                map.on("layers-add-result", function (evt) {
+                    var legend = new Legend({
+                        map: map,
+                        layerInfos: [{
+                            layer: schools,
+                            title: "Schools"
+                        }, {
+                            layer: districts,
+                            title: "Number of students receiving free or reduce priced lunch"
+                        }] //if no layer is specified, all layer will be added to the legend
+                    }, "legend");
+                    legend.startup();
+                    //addLabels();
+
+                });
+
+                function addLabels() {
+                    // create a text symbol to define the style of labels
+                    var labelField = "DIST_NAME";
+                    var distLabel = new TextSymbol().setColor(new Color("#de2d26"));
+                    distLabel.font.setSize("10pt");
+                    distLabel.font.setFamily("arial");
+                    distLabel.font.setWeight(esri.symbol.Font.WEIGHT_BOLD);
+                    var distLabelRenderer = new SimpleRenderer(distLabel);
+                    var labels = new LabelLayer({
+                        id: "labels"
+                    });
+                    // tell the label layer to label the districts feature layer 
+                    labels.addFeatureLayer(districts, distLabelRenderer, "${" + labelField + "}");
+                    // add the label layer to the map
+                    map.addLayer(labels);
+                }
+            });
+    </script>
+</head>
+
+<body>
+    <!--Add new element to store the user interface for widgets-->
+    <div id="map">
+        <div id="home"></div>
+        <div id="info" style="font-size: 20px;">Legend
+            <div id="legend"></div>
+        </div>
+    </div>
+</body>
+
+</html>
