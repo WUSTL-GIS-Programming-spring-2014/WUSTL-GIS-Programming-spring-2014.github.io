@@ -34,7 +34,9 @@
         });
 
         geocoder = new Geocoder({ 
-          map: map 
+          map: map, 
+          autoComplete: true, 
+          minCharacters: 5
         }, "search");
         geocoder.startup();
       });
