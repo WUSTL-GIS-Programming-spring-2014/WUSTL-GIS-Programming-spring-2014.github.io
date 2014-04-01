@@ -1,4 +1,3 @@
-WUSTL-GIS-Programming-spring-2014.github.io
-===========================================
+View the class github page at
 
-Class github page
+http://WUSTL-GIS-Programming-spring-2014.github.io
